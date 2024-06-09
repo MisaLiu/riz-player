@@ -1,24 +1,59 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import { autoDetectRenderer, Application, Text, Container, Ticker } from 'pixi.js';
+import '@/styles/index.css';
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+const initApp = async () => {
+  const renderer = await autoDetectRenderer({
+    preference: 'webgpu',
+    // Normal Pixi.js renderer options
+    antialias: true,
+    autoDensity: true,
+    backgroundColor: 0xffffff,
+    resolution: window.devicePixelRatio,
+    width: document.documentElement.clientWidth,
+    height: document.documentElement.clientHeight,
+    hello: true,
+  });
+  const stage = new Container();
+  const ticker = Ticker.shared;
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+  const text = new Text({
+    text: 'Hello world ;)',
+    style: {
+      fontSize: 24,
+    }
+  });
+
+  text.anchor.x = 0.5;
+  text.anchor.y = 0.5;
+
+  text.position.x = renderer.width / 2;
+  text.position.y = renderer.height / 2;
+
+  stage.addChild(text);
+
+  // Ticking
+  ticker.add(() => {
+    renderer.render(stage);
+  });
+
+  // Add canvas to HTML
+  renderer.canvas.classList.add('app');
+  document.body.appendChild(renderer.canvas);
+
+  // Start ticker
+  ticker.start();
+
+  // For debug
+  globalThis.__PIXI_RENDERER__ = renderer;
+  globalThis.__PIXI_STAGE__ = stage;
+
+  // Resizer
+  window.addEventListener('resize', () => {
+    renderer.resize(document.documentElement.clientWidth, document.documentElement.clientHeight, window.devicePixelRatio);
+
+    text.position.x = renderer.width / 2;
+    text.position.y = renderer.height / 2;
+  });
+};
+
+initApp();
