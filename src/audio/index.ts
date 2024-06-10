@@ -1,6 +1,7 @@
 import { Ticker } from 'pixi.js';
 import { GameAudioClip } from './clip';
 import { resumeAudioCtx } from './utils';
+import { GameAudioClock } from './clock';
 
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 const GlobalAudioCtx = new AudioCtx();
@@ -30,7 +31,8 @@ export class GameAudio {
   ctx: AudioContext;
   gain: GainNode;
 
-  ticker: Ticker = Ticker.system;
+  ticker: Ticker;
+  clock: GameAudioClock;
 
   clips: Record<string, GameAudioClip> = {};
 
@@ -39,8 +41,10 @@ export class GameAudio {
     this.gain = this.ctx.createGain();
 
     this.gain.connect(this.ctx.destination);
-
     resumeAudioCtx(this.ctx);
+
+    this.ticker = Ticker.system;
+    this.clock = new GameAudioClock(this.ctx, this.ticker);
   }
 
   add(name: string, src: string | File | ArrayBuffer) {
