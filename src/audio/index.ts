@@ -102,7 +102,8 @@ const handleWindowLoaded = () => {
   window.removeEventListener('load', handleWindowLoaded);
 
   if (GlobalAudioCtx.state === 'running') return;
-  window.addEventListener('pointerdown', resumeAudio);
+  window.addEventListener('touchstart', resumeAudio);
+  window.addEventListener('mousedown', resumeAudio);
 };
 
 const resumeAudio = () => {
@@ -113,7 +114,8 @@ GlobalAudioCtx.addEventListener('statechange', () => {
   if (GlobalAudioCtx.state !== 'running') return;
 
   console.log('[Audio]', 'Resume audio success');
-  window.removeEventListener('pointerdown', resumeAudio);
+  window.removeEventListener('touchstart', resumeAudio);
+  window.removeEventListener('mousedown', resumeAudio);
 });
 
 window.addEventListener('load', handleWindowLoaded);
