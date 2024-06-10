@@ -1,4 +1,5 @@
 import { Ticker } from 'pixi.js';
+import { resumeAudioCtx } from './utils';
 
 export class GameAudioClock {
   public time: number = 0;
@@ -10,6 +11,8 @@ export class GameAudioClock {
   private readonly _ticker: Ticker;
 
   constructor(audioCtx: AudioContext, ticker: Ticker) {
+    resumeAudioCtx(audioCtx);
+
     this._ctx = audioCtx;
     this._ticker = ticker;
 

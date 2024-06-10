@@ -1,5 +1,7 @@
-import { autoDetectRenderer, Application, Text, Container, Ticker } from 'pixi.js';
+import { autoDetectRenderer, Text, Container, Ticker } from 'pixi.js';
 import '@/styles/index.css';
+import { GameAudio } from './audio';
+import { GameAudioClip } from './audio/clip';
 
 const initApp = async () => {
   const renderer = await autoDetectRenderer({
@@ -14,6 +16,9 @@ const initApp = async () => {
     hello: true,
   });
   const stage = new Container();
+  const audio = new GameAudio();
+
+  let testAudio: GameAudioClip;
 
   const text = new Text({
     text: 'Hello world ;)',
@@ -49,6 +54,27 @@ const initApp = async () => {
 
     text.position.x = renderer.width / 2;
     text.position.y = renderer.height / 2;
+  });
+
+  // Test audio module
+  const updateAudioProgress = () => {
+    if (!testAudio) return;
+    text.text = `Progress: ${Math.round((audio.clock.time - testAudio.startTime) * 1000) / 1000}s`;
+  };
+
+  document.querySelector<HTMLInputElement>('#test-load-audio')!.addEventListener('input', function () {
+    const file = this.files![0];
+    if (!file) return;
+
+    console.log(file);
+    audio.add('test', file)
+      .then((e) => {
+        testAudio = e;
+
+        console.log(e);
+        e.play();
+        Ticker.shared.add(updateAudioProgress);
+      });
   });
 };
 

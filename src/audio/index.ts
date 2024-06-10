@@ -5,6 +5,7 @@ import { GameAudioClock } from './clock';
 
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 const GlobalAudioCtx = new AudioCtx();
+const GlobalAudioClock = new GameAudioClock(GlobalAudioCtx, Ticker.system);
 
 const downloadFile = (url: string) => new Promise<ArrayBuffer>((res, rej) => {
   fetch(url)
@@ -31,8 +32,7 @@ export class GameAudio {
   ctx: AudioContext;
   gain: GainNode;
 
-  ticker: Ticker;
-  clock: GameAudioClock;
+  clock: GameAudioClock = GlobalAudioClock;
 
   clips: Record<string, GameAudioClip> = {};
 
@@ -42,13 +42,10 @@ export class GameAudio {
 
     this.gain.connect(this.ctx.destination);
     resumeAudioCtx(this.ctx);
-
-    this.ticker = Ticker.system;
-    this.clock = new GameAudioClock(this.ctx, this.ticker);
   }
 
   add(name: string, src: string | File | ArrayBuffer) {
-    return new Promise(async (res, rej) => {
+    return new Promise<GameAudioClip>(async (res, rej) => {
       try {
         let arrayBuffer: ArrayBuffer;
 
@@ -58,6 +55,8 @@ export class GameAudio {
 
         const track = await this.ctx.decodeAudioData(arrayBuffer);
         const clip = new GameAudioClip(this, name, track);
+
+        if (this.clips[name]) console.warn('[Audio]', `Name '${name}' already in use, overriding...`);
         this.clips[name] = clip;
 
         res(clip);
@@ -70,14 +69,31 @@ export class GameAudio {
   remove(name: string) {
     if (!this.clips[name]) return;
 
-    this.clips[name].buffer.disconnect();
-    this.clips[name].gain.disconnect();
-
+    this.clips[name].destroy();
     delete this.clips[name];
   }
 
-  private _calcTick() {
+  play(name: string) {
+    if (!this.clips[name]) return;
+    this.clips[name].play();
+  }
 
+  pause(name: string) {
+    if (!this.clips[name]) return;
+    this.clips[name].pause();
+  }
+
+  stop(name: string) {
+    if (!this.clips[name]) return;
+    this.clips[name].stop();
+  }
+
+  get volume() {
+    return this.gain.gain.value;
+  }
+
+  set volume(volume: number) {
+    this.gain.gain.value = volume;
   }
 }
 
