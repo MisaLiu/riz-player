@@ -14,7 +14,6 @@ const initApp = async () => {
     hello: true,
   });
   const stage = new Container();
-  const ticker = Ticker.shared;
 
   const text = new Text({
     text: 'Hello world ;)',
@@ -31,17 +30,14 @@ const initApp = async () => {
 
   stage.addChild(text);
 
-  // Ticking
-  ticker.add(() => {
+  // Refresh renderer
+  Ticker.shared.add(() => {
     renderer.render(stage);
   });
 
   // Add canvas to HTML
   renderer.canvas.classList.add('app');
   document.body.appendChild(renderer.canvas);
-
-  // Start ticker
-  ticker.start();
 
   // For debug
   globalThis.__PIXI_RENDERER__ = renderer;
