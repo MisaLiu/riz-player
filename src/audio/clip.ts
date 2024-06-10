@@ -7,7 +7,7 @@ export class GameAudioClip {
   readonly gain: GainNode;
 
   constructor(audio: GameAudio, name: string, audioBuffer?: AudioBuffer) {
-    if (!audioBuffer) throw new Error('Invaild AudioBuffer, unsupported audio type of corrupted audio file');
+    if (!audioBuffer) throw new Error('Invaild AudioBuffer, unsupported audio type or corrupted audio file');
 
     this.name = name;
     this.source = audioBuffer;
