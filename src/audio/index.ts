@@ -1,5 +1,6 @@
 import { Ticker } from 'pixi.js';
 import { GameAudioClip } from './clip';
+import { resumeAudioCtx } from './utils';
 
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 const GlobalAudioCtx = new AudioCtx();
@@ -38,6 +39,8 @@ export class GameAudio {
     this.gain = this.ctx.createGain();
 
     this.gain.connect(this.ctx.destination);
+
+    resumeAudioCtx(this.ctx);
   }
 
   add(name: string, src: string | File | ArrayBuffer) {
@@ -79,24 +82,18 @@ const handleWindowLoaded = () => {
   window.removeEventListener('load', handleWindowLoaded);
 
   if (GlobalAudioCtx.state === 'running') return;
-  window.addEventListener('pointerdown', resumeAudioCtx);
+  window.addEventListener('pointerdown', resumeAudio);
 };
 
-const resumeAudioCtx = () => {
-  console.log('[Audio]', 'Try resuming audio...');
-
-  GlobalAudioCtx.resume()
-    .catch((e) => {
-      console.error('[Audio]', 'Failed to resume audio');
-      console.error(e);
-    });
+const resumeAudio = () => {
+  resumeAudioCtx(GlobalAudioCtx);
 };
 
 GlobalAudioCtx.addEventListener('statechange', () => {
   if (GlobalAudioCtx.state !== 'running') return;
 
   console.log('[Audio]', 'Resume audio success');
-  window.removeEventListener('pointerdown', resumeAudioCtx);
+  window.removeEventListener('pointerdown', resumeAudio);
 });
 
 window.addEventListener('load', handleWindowLoaded);
