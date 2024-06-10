@@ -3,6 +3,9 @@
 import type { Application, Container, AbstractRenderer } from "pixi.js";
 
 declare global {
+  // webkit AudioContect compability
+  var webkitAudioContext = AudioContext;
+
   // For Devtool
   var __PIXI_APP__ = new Application;
   var __PIXI_STAGE__ = new Container;
