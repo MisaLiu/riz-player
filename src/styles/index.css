@@ -8,3 +8,13 @@ body {
 canvas.app {
   display: block;
 }
+
+div.debug.file-select {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+div.debug.file-select label {
+  display: block;
+}

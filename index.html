@@ -7,10 +7,17 @@
     <title>Vite + TS</title>
   </head>
   <body>
-    <label style="display: block; position: absolute; top: 0; left: 0; z-index: 10;">
-      <input type="file" id="test-load-audio" />
-      Load audio
-    </label>
+    <div class="debug file-select">
+      <label>
+        Load audio
+        <input type="file" id="test-load-audio" />
+      </label>
+      <label>
+        Load Chart
+        <input type="file" id="test-load-chart" />
+      </label>
+      <button id="test-start">Start</button>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
