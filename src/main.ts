@@ -1,23 +1,14 @@
 import { autoDetectRenderer, Text, Container, Ticker } from 'pixi.js';
 import '@/styles/index.css';
+import { GameRenderer } from './renderer';
 import { GameAudio } from './audio';
 import { GameAudioClip } from './audio/clip';
 
-const initApp = async () => {
-  const renderer = await autoDetectRenderer({
-    preference: 'webgpu',
-    // Normal Pixi.js renderer options
-    antialias: true,
-    autoDensity: true,
-    backgroundColor: 0xffffff,
-    resolution: window.devicePixelRatio,
-    width: document.documentElement.clientWidth,
-    height: document.documentElement.clientHeight,
-    hello: true,
-  });
-  const stage = new Container();
-  const audio = new GameAudio();
+const app = new GameRenderer();
+const audio = new GameAudio();
+app.init().then(() => initApp());
 
+const initApp = async () => {
   let testAudio: GameAudioClip;
 
   const text = new Text({
@@ -30,30 +21,25 @@ const initApp = async () => {
   text.anchor.x = 0.5;
   text.anchor.y = 0.5;
 
-  text.position.x = renderer.width / 2;
-  text.position.y = renderer.height / 2;
+  text.position.x = app.renderer.width / 2;
+  text.position.y = app.renderer.height / 2;
 
-  stage.addChild(text);
-
-  // Refresh renderer
-  Ticker.shared.add(() => {
-    renderer.render(stage);
-  });
+  app.stage.addChild(text);
 
   // Add canvas to HTML
-  renderer.canvas.classList.add('app');
-  document.body.appendChild(renderer.canvas);
+  app.canvas.classList.add('app');
+  document.body.appendChild(app.canvas);
 
   // For debug
-  globalThis.__PIXI_RENDERER__ = renderer;
-  globalThis.__PIXI_STAGE__ = stage;
+  globalThis.__PIXI_RENDERER__ = app.renderer;
+  globalThis.__PIXI_STAGE__ = app.stage;
 
   // Resizer
   window.addEventListener('resize', () => {
-    renderer.resize(document.documentElement.clientWidth, document.documentElement.clientHeight, window.devicePixelRatio);
+    app.resize(document.documentElement.clientWidth, document.documentElement.clientHeight);
 
-    text.position.x = renderer.width / 2;
-    text.position.y = renderer.height / 2;
+    text.position.x = app.renderer.width / 2;
+    text.position.y = app.renderer.height / 2;
   });
 
   // Test audio module
@@ -76,6 +62,11 @@ const initApp = async () => {
         Ticker.shared.add(updateAudioProgress);
       });
   });
-};
 
-initApp();
+  document.querySelector<HTMLInputElement>('#test-load-chart')!.addEventListener('input', function () {
+    const file = this.files![0];
+    if (!file) return;
+
+    console.log(file);
+  });
+};
