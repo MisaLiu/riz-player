@@ -1,3 +1,4 @@
+import { Container } from 'pixi.js';
 import { GameChartNote } from './note';
 import type { OfficialChart } from './types';
 
@@ -9,6 +10,12 @@ export class GameChart {
   constructor(bpm: number, offset: number) {
     this.bpm = bpm;
     this.offset = offset;
+  }
+
+  createSprites(stage: Container) {
+    for (const note of this.notes) {
+      note.createSprite(stage);
+    }
   }
 }
 
