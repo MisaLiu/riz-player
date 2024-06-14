@@ -23,12 +23,13 @@ export class GameRenderer {
     game: Container,
   };
 
-  private readonly _gameContainerCullArea = new Rectangle(0, 0, 0, 0);
+  private readonly _stageRectangle = new Rectangle(0, 0, 0, 0);
 
   constructor() {
     this.stage = new Container;
     this.stage.label = 'Stage';
     this.stage.sortableChildren = true;
+    this.stage.boundsArea = this._stageRectangle;
 
     this.containers = {
       ui: new Container,
@@ -39,8 +40,11 @@ export class GameRenderer {
     this.containers.ui.label = 'UI container';
 
     this.containers.game.sortableChildren = this.containers.ui.sortableChildren = true;
+    this.containers.game.boundsArea = this.containers.ui.boundsArea = this._stageRectangle;
+
+    this.containers.game.interactive = this.containers.game.interactiveChildren = false;
     this.containers.game.cullableChildren = true;
-    this.containers.game.cullArea = this._gameContainerCullArea;
+    this.containers.game.cullArea = this._stageRectangle;
     this.containers.ui.zIndex = 10;
 
     this.stage.addChild(this.containers.game);
@@ -73,8 +77,8 @@ export class GameRenderer {
   resize(width: number, height: number, resolution: number = window.devicePixelRatio) {
     this.renderer.resize(width, height, resolution);
 
-    this._gameContainerCullArea.width = width * resolution;
-    this._gameContainerCullArea.height = height * resolution;
+    this._stageRectangle.width = width * resolution;
+    this._stageRectangle.height = height * resolution;
   }
 
   get canvas() {
