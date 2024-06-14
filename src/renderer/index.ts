@@ -66,7 +66,11 @@ export class GameRenderer {
             this.renderer.render(this.stage);
           });
 
-          this.resize(document.documentElement.clientWidth, document.documentElement.clientHeight, window.devicePixelRatio);
+          this.resize(
+            newInitOptions.width || document.documentElement.clientWidth,
+            newInitOptions.height || document.documentElement.clientHeight,
+            newInitOptions.resolution || window.devicePixelRatio
+          );
           res();
         }).catch((e) => {
           rej(e);
