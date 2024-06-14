@@ -4,6 +4,7 @@ import { GameRenderer } from './renderer';
 import { GameAudio } from './audio';
 import { GameAudioClip } from './audio/clip';
 import { GameChart, readChartFromOfficial } from './chart';
+import { DebugStartGame } from './game';
 import { OfficialChart } from './chart/types';
 
 interface ChartFiles {
@@ -89,5 +90,12 @@ const initApp = async () => {
     } catch(e) {
       console.error(e);
     }
+  });
+
+  document.querySelector<HTMLButtonElement>('#test-start')!.addEventListener('click', () => {
+    if (!ChartFiles.music) return;
+    if (!ChartFiles.chart) return;
+
+    DebugStartGame(app, ChartFiles.chart, audio, ChartFiles.music);
   });
 };
