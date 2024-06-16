@@ -1,4 +1,5 @@
 import { Sprite, Container, Texture } from 'pixi.js';
+import { GameChartLine } from './line';
 
 const DebugNoteTextureCache = await (() => new Promise<Texture>(async (res, rej) => {
   const pointSize = 26;
@@ -22,13 +23,21 @@ export class GameChartNote {
   readonly type: number;
   readonly time: number;
   readonly floorPosition: number;
+  readonly line: GameChartLine;
 
   sprite!: Sprite;
 
-  constructor(type: number, time: number, floorPosition: number) {
+  constructor(
+    type: number,
+    time: number,
+    floorPosition: number,
+    line: GameChartLine
+  ) {
     this.type = type;
     this.time = time;
     this.floorPosition = floorPosition;
+
+    this.line = line;
   }
 
   createSprite(stage: Container) {
